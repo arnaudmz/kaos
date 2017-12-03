@@ -1,4 +1,4 @@
-# kaos Chaos Monkey for Kubernetes
+# Kaos: Kinda Chaos Monkey for Kubernetes
 
 Based on the CRD Custom Resources Definition examples [Kubernetes Deep Dive: Code Generation for CustomResources](https://blog.openshift.com/kubernetes-deep-dive-code-generation-customresources/) and [Sample controller](https://github.com/kubernetes/sample-controller).
 This code is an Operator acting as a chaos generator as Netflix [Simian Army](https://github.com/Netflix/SimianArmy).
@@ -44,6 +44,11 @@ Build and run the example:
 cd cmd/kaos-operator
 go build
 ./kaos-operator -kubeconfig ~/.kube/config
+```
+
+Can also be launched as an in-cluster K8s deployment:
+```
+kubectl run kaos-operator --image=arnaudmz/kaos:v0.1
 ```
 
 Watch the events describing kaos in action:
