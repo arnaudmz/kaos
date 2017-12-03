@@ -1,0 +1,43 @@
+package: github.com/arnaudmz/kaos
+import:
+- package: github.com/golang/glog
+- package: k8s.io/api
+  subpackages:
+  - apps/v1beta2
+  - core/v1
+- package: k8s.io/apimachinery
+  subpackages:
+  - pkg/api/errors
+  - pkg/apis/meta/v1
+  - pkg/conversion
+  - pkg/labels
+  - pkg/runtime
+  - pkg/runtime/schema
+  - pkg/runtime/serializer
+  - pkg/types
+  - pkg/util/runtime
+  - pkg/util/wait
+  - pkg/watch
+- package: k8s.io/client-go
+  version: ^5.0.1
+  subpackages:
+  - discovery
+  - discovery/fake
+  - informers
+  - kubernetes
+  - kubernetes/scheme
+  - kubernetes/typed/core/v1
+  - listers/apps/v1beta2
+  - rest
+  - testing
+  - tools/cache
+  - tools/clientcmd
+  - tools/record
+  - util/flowcontrol
+  - util/workqueue
+- package: github.com/golang/groupcache
+  subpackages:
+  - lru
+- package: k8s.io/code-generator
+- package: github.com/robfig/cron
+  version: ^1.0.0

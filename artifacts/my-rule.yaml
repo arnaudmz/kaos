@@ -1,0 +1,9 @@
+apiVersion: kaos.k8s.io/v1
+kind: KaosRule
+metadata:
+  name: my-rule
+spec:
+  Cron: "0 * * * * *"
+  PodSelector:
+    MatchLabels:
+      run: nginx
