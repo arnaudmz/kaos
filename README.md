@@ -33,7 +33,7 @@ kubectl apply -f artifacts/my-rule.yaml
 ```
 
 
-Start some matching pods to them going down:
+Start some matching pods to see them going down:
 ```
 kubectl run nginx -r=8 --image=nginx:alpine
 ```
