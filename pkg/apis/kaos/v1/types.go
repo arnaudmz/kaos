@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -18,7 +19,7 @@ type KaosRule struct {
 
 // KaosRuleSpec is the spec for a KaosRule resource
 type KaosRuleSpec struct {
-	Cron     string `json:"cron"`
+	Cron        string                `json:"cron"`
 	PodSelector *metav1.LabelSelector `json:"podselector,omitempty" protobuf:"bytes,2,opt,name=podselector"`
 }
 
@@ -30,4 +31,9 @@ type KaosRuleList struct {
 	metav1.ListMeta `json:"metadata"`
 
 	Items []KaosRule `json:"items"`
+}
+
+// String simply prints kr id
+func (kr *KaosRule) String() string {
+	return fmt.Sprintf("KaosRule (%s/%s)", kr.ObjectMeta.Namespace, kr.ObjectMeta.Name)
 }

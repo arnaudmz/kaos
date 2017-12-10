@@ -34,6 +34,7 @@ import (
 	"k8s.io/client-go/tools/record"
 	"k8s.io/client-go/util/workqueue"
 
+	kaosv1 "github.com/arnaudmz/kaos/pkg/apis/kaos/v1"
 	clientset "github.com/arnaudmz/kaos/pkg/client/clientset/versioned"
 	kaosscheme "github.com/arnaudmz/kaos/pkg/client/clientset/versioned/scheme"
 	informers "github.com/arnaudmz/kaos/pkg/client/informers/externalversions"
@@ -274,13 +275,13 @@ func (c *Controller) syncHandler(key string) error {
 			return nil
 		}
 
-		glog.V(4).Info(fmt.Sprintf("Removing existing Cron for %s to update it", key))
+		glog.V(4).Info(fmt.Sprintf("%s Removing existing Cron to update it", kr.String()))
 		cronItem.cron.Stop()
 		delete(c.cronPerRule, key)
 		glog.V(4).Info(c.cronPerRule)
 	}
 	myCron := cron.New()
-	err = myCron.AddFunc(kr.Spec.Cron, func() { c.applyKR(namespace, name) })
+	err = myCron.AddFunc(kr.Spec.Cron, func() { c.applyKR(namespace, name, kr) })
 	if err != nil {
 		c.recorder.Event(kr, corev1.EventTypeWarning, CronError, fmt.Sprintf("Error parsing Cron %s: %v", kr.Spec.Cron, err))
 		return err
@@ -310,43 +311,37 @@ func (c *Controller) enqueueKR(obj interface{}) {
 
 // applyKR is woken up when it needs to apply a KaosRule
 // and eventually delete a pod (in a match is found)
-func (c *Controller) applyKR(namespace string, name string) {
-	kr, err := c.kaosrulesLister.KaosRules(namespace).Get(name)
-	if err != nil {
-		// The KaosRule resource may no longer exist, in which case we stop
-		// processing.
-		if errors.IsNotFound(err) {
-			runtime.HandleError(fmt.Errorf("kaosrule '%s/%s' in work queue no longer exists, won't kill any pod", namespace, name))
-			return
-		}
-		runtime.HandleError(err)
-		return
-	}
+func (c *Controller) applyKR(namespace string, name string, kr *kaosv1.KaosRule) {
+
 	sel, err := metav1.LabelSelectorAsSelector(kr.Spec.PodSelector)
 	if err != nil {
-		glog.Fatalf("Error parsing PodSelector for KaosRule %s/%s: %v", namespace, name, err)
+		glog.Fatalf("%s Error parsing PodSelector: %v", kr.String(), err)
 		c.recorder.Event(kr, corev1.EventTypeWarning, PodSelectingError, fmt.Sprintf("Error selecting pods: %v", err))
 		return
 	}
-	glog.V(4).Info(fmt.Sprintf("Apply filtered rule (filter=%s) %s", sel, kr.Spec))
+
+	glog.V(4).Info(fmt.Sprintf("%s Apply filtered rule (filter=%s)", kr.String(), sel.String()))
 	list, err := c.kubeclientset.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: sel.String()})
 	if err != nil {
-		glog.Fatalf("Error listing pods in %s: %v", namespace, err)
+		glog.Fatalf("%s Error listing pods: %v", kr.String(), err)
 		c.recorder.Event(kr, corev1.EventTypeWarning, PodListingError, fmt.Sprintf("Error listing pods: %v", err))
 		return
 	}
-	glog.V(4).Info(fmt.Sprintf("Apply rule got %d items from list %s", len(list.Items), list))
+
+	glog.V(4).Info(fmt.Sprintf("%s Apply rule got %d items from list %s", kr.String(), len(list.Items), list))
 	if len(list.Items) == 0 {
-		glog.V(2).Info(fmt.Sprintf("No pod matching %s/%s (%s), leaving", namespace, name, sel.String()))
+		glog.V(2).Info(fmt.Sprintf("%s No pod matching (%s), leaving", kr.String(), sel.String()))
 		c.recorder.Event(kr, corev1.EventTypeWarning, PodListingEmpty, fmt.Sprintf("No pods matching %s", sel.String()))
 		return
 	}
+
 	victimIndex := c.rand.Intn(len(list.Items))
 	victimName := list.Items[victimIndex].Name
-	glog.V(2).Info(fmt.Sprintf("KaosRule (%s/%s) is about to delete pod index %d from list matching %s", namespace, name, victimIndex, sel.String()))
+
+	glog.V(2).Info(fmt.Sprintf("%s About to delete pod index %d from list matching %s", kr.String(), victimIndex, sel.String()))
 	err = c.kubeclientset.CoreV1().Pods(namespace).Delete(victimName, nil)
 	if err != nil && !errors.IsConflict(err) && !errors.IsNotFound(err) {
-		glog.Fatalf("Error deleting pod %s in ns %s: %v", victimName, namespace, err)
+		glog.Fatalf("%s Error deleting pod %s in: %v", kr.String(), victimName, err)
 		c.recorder.Event(kr, corev1.EventTypeWarning, PodDeletingError, fmt.Sprintf("Error deleting pod %s: %v", victimName, err))
 	} else {
 		c.recorder.Event(kr, corev1.EventTypeNormal, KaosCreated, fmt.Sprintf("Pod %s has been deleted", victimName))
