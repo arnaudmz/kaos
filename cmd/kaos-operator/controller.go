@@ -18,8 +18,8 @@ package main
 
 import (
 	"fmt"
-	"time"
 	"math/rand"
+	"time"
 
 	"github.com/golang/glog"
 	corev1 "k8s.io/api/core/v1"
@@ -35,12 +35,11 @@ import (
 	"k8s.io/client-go/util/workqueue"
 
 	clientset "github.com/arnaudmz/kaos/pkg/client/clientset/versioned"
-	samplescheme "github.com/arnaudmz/kaos/pkg/client/clientset/versioned/scheme"
+	kaosscheme "github.com/arnaudmz/kaos/pkg/client/clientset/versioned/scheme"
 	informers "github.com/arnaudmz/kaos/pkg/client/informers/externalversions"
 	listers "github.com/arnaudmz/kaos/pkg/client/listers/kaos/v1"
 	"github.com/robfig/cron"
 )
-
 
 const (
 	// controllerAgentName is the name in event sources
@@ -74,7 +73,7 @@ const (
 
 // CronRuleItem hold data to get back to the cron configuration
 type CronRuleItem struct {
-	cron *cron.Cron
+	cron            *cron.Cron
 	resourceVersion string
 }
 
@@ -118,7 +117,7 @@ func NewController(
 	// Create event broadcaster
 	// Add sample-controller types to the default Kubernetes Scheme so Events can be
 	// logged for sample-controller types.
-	samplescheme.AddToScheme(scheme.Scheme)
+	kaosscheme.AddToScheme(scheme.Scheme)
 	glog.V(4).Info("Creating event broadcaster")
 	eventBroadcaster := record.NewBroadcaster()
 	eventBroadcaster.StartLogging(glog.Infof)
@@ -259,7 +258,7 @@ func (c *Controller) syncHandler(key string) error {
 			cronItem, ok := c.cronPerRule[key]
 			if ok {
 				glog.V(4).Info(fmt.Sprintf("Removing existing Cron for %s", key))
-			  cronItem.cron.Stop()
+				cronItem.cron.Stop()
 				delete(c.cronPerRule, key)
 				glog.V(4).Info(c.cronPerRule)
 			}
@@ -281,15 +280,15 @@ func (c *Controller) syncHandler(key string) error {
 		glog.V(4).Info(c.cronPerRule)
 	}
 	myCron := cron.New()
-	err = myCron.AddFunc(kr.Spec.Cron, func(){ c.applyKR(namespace, name) })
+	err = myCron.AddFunc(kr.Spec.Cron, func() { c.applyKR(namespace, name) })
 	if err != nil {
-		c.recorder.Event(kr, corev1.EventTypeWarning, CronError, fmt.Sprintf("Error parsing Cron %s: %v",kr.Spec.Cron, err))
+		c.recorder.Event(kr, corev1.EventTypeWarning, CronError, fmt.Sprintf("Error parsing Cron %s: %v", kr.Spec.Cron, err))
 		return err
 	}
 	myCron.Start()
 	c.cronPerRule[key] = &CronRuleItem{
 		resourceVersion: kr.ResourceVersion,
-		cron: myCron,
+		cron:            myCron,
 	}
 	glog.V(4).Info(c.cronPerRule)
 	c.recorder.Event(kr, corev1.EventTypeNormal, SuccessSynced, MessageResourceSynced)
@@ -309,7 +308,8 @@ func (c *Controller) enqueueKR(obj interface{}) {
 	c.workqueue.AddRateLimited(key)
 }
 
-// applyKR is woken up when it needs to acuatlly kill a pod
+// applyKR is woken up when it needs to apply a KaosRule
+// and eventually delete a pod (in a match is found)
 func (c *Controller) applyKR(namespace string, name string) {
 	kr, err := c.kaosrulesLister.KaosRules(namespace).Get(name)
 	if err != nil {
@@ -329,7 +329,7 @@ func (c *Controller) applyKR(namespace string, name string) {
 		return
 	}
 	glog.V(4).Info(fmt.Sprintf("Apply filtered rule (filter=%s) %s", sel, kr.Spec))
-	list, err := c.kubeclientset.CoreV1().Pods(namespace).List(metav1.ListOptions{ LabelSelector: sel.String() })
+	list, err := c.kubeclientset.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: sel.String()})
 	if err != nil {
 		glog.Fatalf("Error listing pods in %s: %v", namespace, err)
 		c.recorder.Event(kr, corev1.EventTypeWarning, PodListingError, fmt.Sprintf("Error listing pods: %v", err))

@@ -2,10 +2,10 @@ package main
 
 import (
 	"flag"
-	"github.com/golang/glog"
 	clientset "github.com/arnaudmz/kaos/pkg/client/clientset/versioned"
 	informers "github.com/arnaudmz/kaos/pkg/client/informers/externalversions"
 	"github.com/arnaudmz/kaos/pkg/signals"
+	"github.com/golang/glog"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 	"time"
