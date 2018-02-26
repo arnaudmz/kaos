@@ -23,15 +23,22 @@ Which will delete every minute a pod in the current namespace matching `run=ngin
 First register the custom resource definition:
 
 ```
-kubectl apply -f artifacts/kaosrule-crd.yaml
+kubectl apply -f manifests/kaosrule-crd.yaml
+```
+
+Start the Operator (with its RBAC rules)
+
+```
+kubectl apply -f kaos-operator-rbac.yaml
+kubectl apply -f kaos-operator-serviceaccount.yaml
+kubectl apply -f kaos-operator-statefulset.yaml
 ```
 
 Then add an example of the `KaosRule` kind:
 
 ```
-kubectl apply -f artifacts/my-rule.yaml
+kubectl apply -f manifests/my-rule.yaml
 ```
-
 
 Start some matching pods to see them going down:
 ```
@@ -48,7 +55,7 @@ go build
 
 Can also be launched as an in-cluster K8s deployment:
 ```
-kubectl run kaos-operator --image=arnaudmz/kaos:v0.1
+kubectl run kaos-operator --image=arnaudmz/kaos:v0.3
 ```
 
 Watch the events describing kaos in action:
