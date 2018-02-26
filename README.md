@@ -29,9 +29,9 @@ kubectl apply -f manifests/kaosrule-crd.yaml
 Start the Operator (with its RBAC rules)
 
 ```
-kubectl apply -f kaos-operator-rbac.yaml
-kubectl apply -f kaos-operator-serviceaccount.yaml
-kubectl apply -f kaos-operator-statefulset.yaml
+kubectl apply -f manifests/kaos-operator-rbac.yaml
+kubectl apply -f manifests/kaos-operator-serviceaccount.yaml
+kubectl apply -f manifests/kaos-operator-statefulset.yaml
 ```
 
 Then add an example of the `KaosRule` kind:
