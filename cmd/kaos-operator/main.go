@@ -7,26 +7,26 @@ import (
 	"github.com/arnaudmz/kaos/pkg/metrics"
 	"github.com/arnaudmz/kaos/pkg/signals"
 	"github.com/golang/glog"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/tools/clientcmd"
-	"time"
-	"log"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"goji.io"
 	"goji.io/pat"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/tools/clientcmd"
+	"log"
 	"net/http"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/prometheus/client_golang/prometheus"
+	"time"
 )
 
 var (
 	kuberconfig = flag.String("kubeconfig", "", "Path to a kubeconfig. Only required if out-of-cluster.")
 	master      = flag.String("master", "", "The address of the Kubernetes API server. Overrides any value in kubeconfig. Only required if out-of-cluster.")
-	version   = "No version"
-	timestamp = "0.0"
+	version     = "No version"
+	timestamp   = "0.0"
 	KilledPods  = prometheus.NewCounterVec(prometheus.CounterOpts{
-		  Name: "kaos_killed_pods_total",
-		  Help: "Killed Pods summary",
-	   },
+		Name: "kaos_killed_pods_total",
+		Help: "Killed Pods summary",
+	},
 		[]string{"namespace", "kaosrule"})
 	appInfo = prometheus.NewGauge(prometheus.GaugeOpts{
 		Name:        "app_info",

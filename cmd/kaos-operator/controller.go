@@ -345,6 +345,6 @@ func (c *Controller) applyKR(namespace string, name string, kr *kaosv1.KaosRule)
 		c.recorder.Event(kr, corev1.EventTypeWarning, PodDeletingError, fmt.Sprintf("Error deleting pod %s: %v", victimName, err))
 	} else {
 		c.recorder.Event(kr, corev1.EventTypeNormal, KaosCreated, fmt.Sprintf("Pod %s has been deleted", victimName))
-		KilledPods.WithLabelValues(namespace,name).Inc()
+		KilledPods.WithLabelValues(namespace, name).Inc()
 	}
 }

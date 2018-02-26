@@ -1,9 +1,9 @@
 package metrics
+
 import (
 	"net/http"
 	//"github.com/prometheus/client_golang/prometheus"
 )
-
 
 // Healthz simple healthcheck endpoint
 // HTTP/200
