@@ -1,43 +1,64 @@
 package: github.com/arnaudmz/kaos
 import:
 - package: github.com/golang/glog
+- package: k8s.io/client-go
+  subpackages:
+  - kubernetes
+  - tools/clientcmd
+  - kubernetes/scheme
+  - kubernetes/typed/core/v1
+  - tools/cache
+  - tools/record
+  - util/workqueue
+  - discovery/fake
+  - discovery
+  - testing
+  - util/flowcontrol
+- package: goji.io
+  subpackages:
+  - pat
+- package: github.com/prometheus/client_golang
+  subpackages:
+  - prometheus/promhttp
+  - prometheus
+- package: github.com/robfig/cron
 - package: k8s.io/api
   subpackages:
-  - apps/v1beta2
   - core/v1
 - package: k8s.io/apimachinery
   subpackages:
   - pkg/api/errors
   - pkg/apis/meta/v1
-  - pkg/conversion
-  - pkg/labels
-  - pkg/runtime
-  - pkg/runtime/schema
-  - pkg/runtime/serializer
-  - pkg/types
   - pkg/util/runtime
   - pkg/util/wait
+  - pkg/runtime
+  - pkg/runtime/schema
+  - pkg/conversion
   - pkg/watch
-- package: k8s.io/client-go
-  version: ^5.0.1
+  - pkg/runtime/serializer
+- package: github.com/beorn7/perks
   subpackages:
-  - discovery
-  - discovery/fake
-  - informers
-  - kubernetes
-  - kubernetes/scheme
-  - kubernetes/typed/core/v1
-  - listers/apps/v1beta2
-  - rest
-  - testing
-  - tools/cache
-  - tools/clientcmd
-  - tools/record
-  - util/flowcontrol
-  - util/workqueue
-- package: github.com/golang/groupcache
+  - quantile
+- package: github.com/golang/protobuf
   subpackages:
-  - lru
+  - proto
+- package: github.com/google/gofuzz
+- package: github.com/prometheus/client_model
+  subpackages:
+  - go
+- package: github.com/prometheus/common
+  subpackages:
+  - expfmt
+  - model
+- package: github.com/prometheus/procfs
+- package: k8s.io/kube-openapi
+  subpackages:
+  - pkg/util/proto
+- package: github.com/googleapis/gnostic
+  subpackages:
+  - OpenAPIv2
+- package: github.com/matttproud/golang_protobuf_extensions
+  subpackages:
+  - pbutil
+- package: gopkg.in/yaml.v2
 - package: k8s.io/code-generator
-- package: github.com/robfig/cron
-  version: ^1.0.0

@@ -1,0 +1,19 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    k8s-app: kaos-operator
+  name: kaos-operator
+  namespace: monitoring
+spec:
+  endpoints:
+  - interval: 30s
+    port: http
+  jobLabel: kaos-operator
+  namespaceSelector:
+    matchNames:
+    - kube-system
+  selector:
+    matchLabels:
+      app: kaos-operator

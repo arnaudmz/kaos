@@ -19,6 +19,8 @@ limitations under the License.
 package v1
 
 import (
+	time "time"
+
 	kaos_v1 "github.com/arnaudmz/kaos/pkg/apis/kaos/v1"
 	versioned "github.com/arnaudmz/kaos/pkg/client/clientset/versioned"
 	internalinterfaces "github.com/arnaudmz/kaos/pkg/client/informers/externalversions/internalinterfaces"
@@ -27,7 +29,6 @@ import (
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"
 	cache "k8s.io/client-go/tools/cache"
-	time "time"
 )
 
 // KaosRuleInformer provides access to a shared informer and lister for
@@ -38,19 +39,34 @@ type KaosRuleInformer interface {
 }
 
 type kaosRuleInformer struct {
-	factory internalinterfaces.SharedInformerFactory
+	factory          internalinterfaces.SharedInformerFactory
+	tweakListOptions internalinterfaces.TweakListOptionsFunc
+	namespace        string
 }
 
 // NewKaosRuleInformer constructs a new informer for KaosRule type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
 func NewKaosRuleInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
+	return NewFilteredKaosRuleInformer(client, namespace, resyncPeriod, indexers, nil)
+}
+
+// NewFilteredKaosRuleInformer constructs a new informer for KaosRule type.
+// Always prefer using an informer factory to get a shared informer instead of getting an independent
+// one. This reduces memory footprint and number of connections to the server.
+func NewFilteredKaosRuleInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
 	return cache.NewSharedIndexInformer(
 		&cache.ListWatch{
 			ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
+				if tweakListOptions != nil {
+					tweakListOptions(&options)
+				}
 				return client.KaosV1().KaosRules(namespace).List(options)
 			},
 			WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
+				if tweakListOptions != nil {
+					tweakListOptions(&options)
+				}
 				return client.KaosV1().KaosRules(namespace).Watch(options)
 			},
 		},
@@ -60,12 +76,12 @@ func NewKaosRuleInformer(client versioned.Interface, namespace string, resyncPer
 	)
 }
 
-func defaultKaosRuleInformer(client versioned.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
-	return NewKaosRuleInformer(client, meta_v1.NamespaceAll, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc})
+func (f *kaosRuleInformer) defaultInformer(client versioned.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
+	return NewFilteredKaosRuleInformer(client, f.namespace, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
 }
 
 func (f *kaosRuleInformer) Informer() cache.SharedIndexInformer {
-	return f.factory.InformerFor(&kaos_v1.KaosRule{}, defaultKaosRuleInformer)
+	return f.factory.InformerFor(&kaos_v1.KaosRule{}, f.defaultInformer)
 }
 
 func (f *kaosRuleInformer) Lister() v1.KaosRuleLister {
