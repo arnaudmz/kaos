@@ -34,7 +34,7 @@ spec:
       serviceAccountName: kaos-operator
       containers:
       - name: kaos-operator
-        image: arnaudmz/kaos:v0.3
+        image: arnaudmz/kaos:v0.4
         livenessProbe:
           httpGet:
             path: /healthz
