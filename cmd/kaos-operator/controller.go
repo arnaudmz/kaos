@@ -23,10 +23,12 @@ import (
 
 	"github.com/golang/glog"
 	corev1 "k8s.io/api/core/v1"
+	api "k8s.io/kubernetes/pkg/apis/core"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
 	typedcorev1 "k8s.io/client-go/kubernetes/typed/core/v1"
@@ -321,7 +323,9 @@ func (c *Controller) applyKR(namespace string, name string, kr *kaosv1.KaosRule)
 	}
 
 	glog.V(4).Info(fmt.Sprintf("%s Apply filtered rule (filter=%s)", kr.String(), sel.String()))
-	list, err := c.kubeclientset.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: sel.String()})
+	list, err := c.kubeclientset.CoreV1().Pods(namespace).List(metav1.ListOptions{
+		LabelSelector: sel.String(),
+		FieldSelector: fields.OneTermEqualSelector(api.PodStatusField, "Running").String() })
 	if err != nil {
 		glog.Fatalf("%s Error listing pods: %v", kr.String(), err)
 		c.recorder.Event(kr, corev1.EventTypeWarning, PodListingError, fmt.Sprintf("Error listing pods: %v", err))

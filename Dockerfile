@@ -4,8 +4,7 @@ COPY . /go/src/github.com/arnaudmz/kaos
 
 WORKDIR /go/src/github.com/arnaudmz/kaos/cmd/kaos-operator
 
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags "-X main.version=0.3 -X main.timestamp=1519636485"
-
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags "-X main.version=0.4 -X main.timestamp=1520033373"
 
 FROM scratch
 

@@ -1,12 +1,27 @@
-hash: 014e89a333041f46dabe55b044b98b7228fab1d9c207947e057a2583bb25983f
-updated: 2018-02-26T09:14:38.53053489+01:00
+hash: d6e46fc3564c1e6c48297ab948d8174a1f26beac6bf3facaf32f7fa6167f665e
+updated: 2018-03-03T00:10:11.286930284+01:00
 imports:
 - name: github.com/beorn7/perks
   version: 4c0e84591b9aa9e6dcfdf3e020114cd81f89d5f9
   subpackages:
   - quantile
+- name: github.com/davecgh/go-spew
+  version: 346938d642f2ec3594ed81d874461961cd0faa76
+  subpackages:
+  - spew
+- name: github.com/ghodss/yaml
+  version: 0ca9ea5df5451ffdf184b4428c902747c2c11cd7
+- name: github.com/gogo/protobuf
+  version: 1adfc126b41513cc696b209667c8656ea7aac67c
+  subpackages:
+  - proto
+  - sortkeys
 - name: github.com/golang/glog
   version: 23def4e6c14b4da8ac2ed8007337bc5eb5007998
+- name: github.com/golang/groupcache
+  version: 66deaeb636dff1ac7d938ce666d090556056a4b0
+  subpackages:
+  - lru
 - name: github.com/golang/protobuf
   version: bbd03ef6da3a115852eaf24c8a1c46aeb39aa175
   subpackages:
@@ -17,10 +32,22 @@ imports:
   version: 15cf44e552f902c4f5a9a4276a4e8a48f2fb790a
   subpackages:
   - OpenAPIv2
+- name: github.com/hashicorp/golang-lru
+  version: 0fb14efe8c47ae851c0034ed7a448854d3d34cf3
+- name: github.com/howeyc/gopass
+  version: bf9dde6d0d2c004a008c27aaee91170c786f6db8
+- name: github.com/imdario/mergo
+  version: 163f41321a19dd09362d4c63cc2489db2015f1f4
+- name: github.com/json-iterator/go
+  version: 3353055b2a1a5ae1b6a8dfde887a524e7088f3a2
 - name: github.com/matttproud/golang_protobuf_extensions
   version: c12348ce28de40eed0136aa2b644d0ee0650e56c
   subpackages:
   - pbutil
+- name: github.com/modern-go/concurrent
+  version: 938152ca6a933f501bb238954eebd3cbcbf489ff
+- name: github.com/modern-go/reflect2
+  version: 1df9eeb2bb81f327b96228865c5687bc2194af3f
 - name: github.com/prometheus/client_golang
   version: c3324c1198cf3374996e9d3098edd46a6b55afc9
   subpackages:
@@ -31,26 +58,54 @@ imports:
   subpackages:
   - go
 - name: github.com/prometheus/common
-  version: 89604d197083d4781071d3c65855d24ecfb0a563
+  version: 6fb6fce6f8b75884b92e1889c150403fc0872c5e
   subpackages:
   - expfmt
   - model
 - name: github.com/prometheus/procfs
-  version: 282c8707aa210456a825798969cc27edda34992a
+  version: d274e363d5759d1c916232217be421f1cc89c5fe
 - name: github.com/robfig/cron
   version: 2315d5715e36303a941d907f038da7f7c44c773b
+- name: github.com/spf13/pflag
+  version: e57e3eeb33f795204c1ca35f56c44f83227c6e66
 - name: goji.io
   version: 0d89ff54b2c18c9c4ba530e32496aef902d3c6cd
   subpackages:
   - pat
+- name: golang.org/x/crypto
+  version: 91a49db82a88618983a78a06c1cbd4e00ab749ab
+  subpackages:
+  - ssh/terminal
+- name: golang.org/x/net
+  version: 22ae77b79946ea320088417e4d50825671d82d57
+  subpackages:
+  - context
+  - http2
+- name: golang.org/x/sys
+  version: dd2ff4accc098aceecb86b36eaa7829b2a17b1c9
+  subpackages:
+  - unix
+- name: golang.org/x/text
+  version: f21a4dfb5e38f5895301dc265a8def02365cc3d0
+  subpackages:
+  - secure/bidirule
+  - unicode/bidi
+  - unicode/norm
+- name: golang.org/x/time
+  version: 6dc17368e09b0e8634d71cac8168d853e869a0c7
+  subpackages:
+  - rate
+- name: gopkg.in/inf.v0
+  version: 3887ee99ecf07df5b447e9b00d9c0b2adaa9f3e4
 - name: gopkg.in/yaml.v2
   version: 7f97868eec74b32b0982dd158a51a446d1da7eb5
 - name: k8s.io/api
-  version: b378c47b2dcba7f5c3ef97d8a5a0b3821ec6a001
+  version: 7ebfdc5e7dfac82cc5c53e1259ad579915950e20
   subpackages:
+  - core
   - core/v1
 - name: k8s.io/apimachinery
-  version: cced8e64b6ca92a8b6afcbfea3353ca016694a45
+  version: e9ff529c66f83aeac6dff90f11ea0c5b7c4d626a
   subpackages:
   - pkg/api/errors
   - pkg/apis/meta/v1
@@ -62,7 +117,7 @@ imports:
   - pkg/util/wait
   - pkg/watch
 - name: k8s.io/client-go
-  version: e00c8f23c00e0935e9abf285596fe76f0b63c040
+  version: 2f45bcbf57f0cfde510a33e7d94a4c89955ff17b
   subpackages:
   - discovery
   - discovery/fake
@@ -76,9 +131,13 @@ imports:
   - util/flowcontrol
   - util/workqueue
 - name: k8s.io/code-generator
-  version: ac34b62827a65b275fbefe8e041d6f7dcf1f3438
+  version: 893b4433a4ba929dd0dacebf7c8956682d7a5d5f
 - name: k8s.io/kube-openapi
   version: 50ae88d24ede7b8bad68e23c805b5d3da5c8abaf
   subpackages:
   - pkg/util/proto
+- name: k8s.io/kubernetes
+  version: 79b15896576b7cd8f40d952f5e8307d29a21ac28
+  subpackages:
+  - pkg/apis/core
 testImports: []
