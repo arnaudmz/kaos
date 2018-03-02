@@ -55,7 +55,7 @@ go build
 
 Can also be launched as an in-cluster K8s deployment:
 ```
-kubectl run kaos-operator --image=arnaudmz/kaos:v0.3
+kubectl run kaos-operator --image=arnaudmz/kaos:v0.4
 ```
 
 Watch the events describing kaos in action:
