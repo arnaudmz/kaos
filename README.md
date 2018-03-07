@@ -6,6 +6,7 @@ Kaos: Kinda Chaos Monkey for Kubernetes
 [![](https://img.shields.io/docker/automated/arnaudmz/kaos.svg)](https://hub.docker.com/r/arnaudmz/kaos)
 [![ImageLayers Size](https://img.shields.io/imagelayers/image-size/arnaudmz/kaos/latest.svg)](https://hub.docker.com/r/arnaudmz/kaos)
 [![ImageLayers Layers](https://img.shields.io/imagelayers/layers/arnaudmz/kaos/latest.svg)](https://hub.docker.com/r/arnaudmz/kaos)
+[![Go Report Card](https://goreportcard.com/badge/github.com/arnaudmz/kaos)](https://goreportcard.com/report/github.com/arnaudmz/kaos)
 
 Based on the CRD Custom Resources Definition examples [Kubernetes Deep Dive: Code Generation for CustomResources](https://blog.openshift.com/kubernetes-deep-dive-code-generation-customresources/) and [Sample controller](https://github.com/kubernetes/sample-controller).
 This code is an Operator acting as a chaos generator as Netflix [Simian Army](https://github.com/Netflix/SimianArmy).
