@@ -23,6 +23,7 @@ var (
 	master      = flag.String("master", "", "The address of the Kubernetes API server. Overrides any value in kubeconfig. Only required if out-of-cluster.")
 	version     = "No version"
 	timestamp   = "0.0"
+  // KilledPods tracks per-rule killed pods count
 	KilledPods  = prometheus.NewCounterVec(prometheus.CounterOpts{
 		Name: "kaos_killed_pods_total",
 		Help: "Killed Pods summary",
