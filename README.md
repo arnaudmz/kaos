@@ -1,9 +1,8 @@
-Kaos: Kinda Chaos Monkey for Kubernetes
-=======================================
+# Kaos: Kinda Chaos Monkey for Kubernetes
 
 [![Docker Stars](https://img.shields.io/docker/stars/arnaudmz/kaos.svg)](https://hub.docker.com/r/arnaudmz/kaos)
 [![Docker Pulls](https://img.shields.io/docker/pulls/arnaudmz/kaos.svg)](https://hub.docker.com/r/arnaudmz/kaos)
-[![](https://img.shields.io/docker/automated/arnaudmz/kaos.svg)](https://hub.docker.com/r/arnaudmz/kaos)
+[![Automated](https://img.shields.io/docker/automated/arnaudmz/kaos.svg)](https://hub.docker.com/r/arnaudmz/kaos)
 [![ImageLayers Size](https://img.shields.io/imagelayers/image-size/arnaudmz/kaos/latest.svg)](https://hub.docker.com/r/arnaudmz/kaos)
 [![ImageLayers Layers](https://img.shields.io/imagelayers/layers/arnaudmz/kaos/latest.svg)](https://hub.docker.com/r/arnaudmz/kaos)
 [![Go Report Card](https://goreportcard.com/badge/github.com/arnaudmz/kaos)](https://goreportcard.com/report/github.com/arnaudmz/kaos)
@@ -25,19 +24,19 @@ spec:
       run: nginx
 ```
 
-Which will delete every minute a pod in the current namespace matching `run=nginx` selector. Cron expressions are based on https://github.com/robfig/cron implementation.
+Which will delete every minute a pod in the current namespace matching `run=nginx` selector. Cron expressions are based on [robfig/cron](https://github.com/robfig/cron) implementation.
 
 ## Getting Started
 
 First register the custom resource definition:
 
-```
+```shell
 kubectl apply -f manifests/kaosrule-crd.yaml
 ```
 
 Start the Operator (with its RBAC rules)
 
-```
+```shell
 kubectl apply -f manifests/kaos-operator-rbac.yaml
 kubectl apply -f manifests/kaos-operator-serviceaccount.yaml
 kubectl apply -f manifests/kaos-operator-statefulset.yaml
@@ -45,35 +44,40 @@ kubectl apply -f manifests/kaos-operator-statefulset.yaml
 
 Then add an example of the `KaosRule` kind:
 
-```
+```shell
 kubectl apply -f manifests/my-rule.yaml
 ```
 
 Start some matching pods to see them going down:
-```
+
+```shell
 kubectl run nginx -r=8 --image=nginx:alpine
 ```
 
+## Development
+
 Build and run the example:
 
-```
+```shell
 cd cmd/kaos-operator
 go build
 ./kaos-operator -kubeconfig ~/.kube/config
 ```
 
 Can also be launched as an in-cluster K8s deployment:
-```
+
+```shell
 kubectl run kaos-operator --image=arnaudmz/kaos:v0.4
 ```
 
 Watch the events describing kaos in action:
-```
+
+```shell
 $ kubectl describe kaosrules
 Name:         my-rule
 Namespace:    default
 Labels:       <none>
-Annotations:  kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"kaos.k8s.io/v1","kind":"KaosRule","metadata":{"annotations":{},"name":"my-rule","namespace":"default"},"spec":{"Cron":"0 * * * * *","Pod...
+Annotations:  kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"kaos.k8s.io/v1","kind":"KaosRule","metadata":{"annotations":{},"name":"my-rule","namespace":"default"},"spec":{"Cron":"0 * * * * *","Pod..."}}
 API Version:  kaos.k8s.io/v1
 Kind:         KaosRule
 Metadata:
