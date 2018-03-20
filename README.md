@@ -12,7 +12,7 @@ Based on the CRD Custom Resources Definition examples [Kubernetes Deep Dive: Cod
 This code is an Operator acting as a chaos generator as Netflix [Simian Army](https://github.com/Netflix/SimianArmy).
 It read chaos rules and randomly deletes matching pods. Rules are defined
 using [CRD](https://kubernetes.io/docs/tasks/access-kubernetes-api/extend-api-custom-resource-definitions/):
-```
+```yaml
 apiVersion: kaos.k8s.io/v1
 kind: KaosRule
 metadata:
